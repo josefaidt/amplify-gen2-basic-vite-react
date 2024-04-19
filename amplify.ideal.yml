@@ -8,6 +8,7 @@ backend:
   phases:
     preBuild:
       commands:
+        - corepack enable
         # configure pnpm store-dir to be inside cloned repo for caching
         - pnpm config set store-dir ./.pnpm-store
     build:
