@@ -1,0 +1,29 @@
+version: 1
+env:
+  variables:
+    # "export CI=true" to force pnpm to install with frozen lockfile
+    # see https://github.com/watson/ci-info/blob/master/index.js#L60
+    CI: true
+backend:
+  phases:
+    preBuild:
+      commands:
+        # configure pnpm store-dir to be inside cloned repo for caching
+        - pnpm config set store-dir ./.pnpm-store
+    build:
+      commands:
+        - pnpm install
+        - pnpm amplify pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
+frontend:
+  phases:
+    build:
+      commands:
+        - pnpm run build
+  artifacts:
+    baseDirectory: dist
+    files:
+      - "**/*"
+  cache:
+    paths:
+      # configure caching for the store
+      - ./.pnpm-store
